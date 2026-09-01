@@ -1,0 +1,454 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "KURUL Search API",
+    "description": "Mehmet'in danisma kurulu — 5 podcast kulliyatinda (2.414 bolum, ~45,2M kelime) duz metin aramasi. Yalnizca kulliyattan sonuc doner; internete cikmaz.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/saglik": {
+      "get": {
+        "summary": "Servis durumu",
+        "operationId": "saglik",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/koltuklar": {
+      "get": {
+        "summary": "Koltuklari ve tanimlarini listele",
+        "operationId": "koltuklar",
+        "parameters": [
+          {
+            "name": "tanim",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Koltuk tanim metnini de dondur",
+              "default": false,
+              "title": "Tanim"
+            },
+            "description": "Koltuk tanim metnini de dondur"
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ara": {
+      "post": {
+        "summary": "Bolum daraltma (ara.py --liste karsiligi)",
+        "operationId": "ara",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AraIstek"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pasajlar": {
+      "post": {
+        "summary": "Pasaj getir (ara.py pasaj mantigi)",
+        "operationId": "pasajlar",
+        "parameters": [
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasajIstek"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bolum": {
+      "get": {
+        "summary": "Tek bolumu sayfali oku (ara.py --oku karsiligi)",
+        "operationId": "bolum",
+        "parameters": [
+          {
+            "name": "koltuk",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Koltuk"
+            }
+          },
+          {
+            "name": "tarih",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "YYYYAAGG",
+              "title": "Tarih"
+            },
+            "description": "YYYYAAGG"
+          },
+          {
+            "name": "sayfa",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Sayfa"
+            }
+          },
+          {
+            "name": "sayfa_boyutu",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20000,
+              "minimum": 2000,
+              "default": 12000,
+              "title": "Sayfa Boyutu"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AraIstek": {
+        "properties": {
+          "koltuk": {
+            "type": "string",
+            "title": "Koltuk",
+            "description": "huberman | parrish | harbinger | richroll | williamson"
+          },
+          "kelimeler": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Kelimeler",
+            "description": "Aranacak terimler (INGILIZCE). OR'lanir. Cok kelimeli ifade desteklenir."
+          },
+          "bolum": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bolum",
+            "description": "Sadece adinda bu gecen bolumlerde ara"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "default": 25
+          }
+        },
+        "type": "object",
+        "required": [
+          "koltuk",
+          "kelimeler"
+        ],
+        "title": "AraIstek"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PasajIstek": {
+        "properties": {
+          "koltuk": {
+            "type": "string",
+            "title": "Koltuk"
+          },
+          "kelimeler": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Kelimeler"
+          },
+          "bolum": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bolum"
+          },
+          "n": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "N",
+            "description": "Bolum basina pasaj sayisi",
+            "default": 3
+          },
+          "pencere": {
+            "type": "integer",
+            "maximum": 2000.0,
+            "minimum": 200.0,
+            "title": "Pencere",
+            "description": "Pasaj genisligi, karakter",
+            "default": 500
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 30.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "description": "Toplam pasaj tavani",
+            "default": 20
+          }
+        },
+        "type": "object",
+        "required": [
+          "koltuk",
+          "kelimeler"
+        ],
+        "title": "PasajIstek"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://KULLANICI-kurul-api.hf.space",
+      "description": "Hugging Face Space (deploy sonrasi guncellenecek)"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

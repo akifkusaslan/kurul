@@ -13,12 +13,13 @@ Bu dosya her oturumun başında okunur ve bağlayıcıdır.
 | No | Ad | Alan | Külliyat |
 |----|-----|------|----------|
 | 01 | **Andrew Huberman** | Nörobilim, davranış, duygu, sağlık, kişisel gelişim | 330 bölüm / 8,5M kelime |
-| 02 | **Shane Parrish** | Karar verme, müzakere, pazarlama, liderlik, iş kurma | 116 bölüm / 1,9M kelime |
+| 02 | **Shane Parrish** | Karar verme, müzakere, pazarlama, liderlik, iş kurma | 117 bölüm / 1,9M kelime |
 | 04 | **Jordan Harbinger** | İkna, insan okuma, beden dili, manipülasyon savunması, ilişki | 194 bölüm / 3,0M kelime |
 | 05 | **Rich Roll** | Dipten dönüş, bağımlılık, alışkanlık, disiplin, anlam, uzun ömür | 672 bölüm / 13,7M kelime |
+| 06 | **Sinan Canan** (TÜRKÇE) | Kendini tanıma, anlam, beyin, evrim, duygu, çocuk, modern hayat | 1.261 bölüm / 3,7M kelime |
 | — | **Chris Williamson** (KÜTÜPHANE) | 1.000+ farklı konuk, çelişen görüşler | 1.102 bölüm / 18,2M kelime |
 
-Toplam: 2.414 bölüm, ~45,2 milyon kelime.
+Toplam: 3.676 bölüm, ~48,9 milyon kelime.
 
 Koltuk tanımları `koltuklar\` altında. Bir koltuğu çalıştırmadan önce kendi
 tanım dosyasını oku — nede güçlü, **nede susması gerektiği** orada yazılı.
@@ -115,15 +116,17 @@ Seçenekler:
 2. Sonra pasajları çek ve oku
 3. Külliyatın tamamını asla okuma — gerek yok ve sığmaz
 
-Bir soruda okunan tipik miktar: 15-30 pasaj. Külliyat 45 milyon kelime;
+Bir soruda okunan tipik miktar: 15-30 pasaj. Külliyat ~49 milyon kelime;
 sen bunun binde birini okuyup cevap yazıyorsun. Sistem böyle çalışıyor.
 
-**Külliyatlar İNGİLİZCE.** Arama kelimelerini İngilizce ver, cevabı Türkçe yaz.
+**Külliyatlar 01/02/04/05 ve Williamson İNGİLİZCE — orada İngilizce ara.**
+**Koltuk 06 (Sinan Canan) TÜRKÇE — orada Türkçe ara.** Cevabı her zaman Türkçe yaz.
 Tek kelime yerine 3-6 kelimeyle ara — külliyat büyük, tek kelime ya çok az
 ya çok fazla getirir.
 
-**Zip hakkında:** Williamson ve Rich Roll külliyatları yer kaplamasın diye
-zip içinde duruyor (`williamson_1/2/3.zip`, `richroll_1/2.zip`). `ara.py` zip içini de tarar —
+**Zip hakkında:** Williamson, Rich Roll ve Sinan Canan külliyatları yer
+kaplamasın diye zip içinde duruyor (`williamson_1/2/3.zip`, `richroll_1/2.zip`,
+`sinancanan.zip`). `ara.py` zip içini de tarar —
 arama açısından hiçbir fark yok, açmana gerek yok. Tek bölümün tamamını
 okumak istersen `--oku` kullan.
 
@@ -140,11 +143,14 @@ Kurul\
       02-parrish.md                 koltuk tanımı
       03-williamson-kutuphane.md    kütüphane kuralları
       04-harbinger.md               koltuk tanımı
+      05-richroll.md                koltuk tanımı
+      06-sinancanan.md              koltuk tanımı
    kulliyat\
       huberman\      330 bölüm  + _INDEKS.txt
       parrish\       117 bölüm  + _INDEKS.txt
       harbinger\    194 bölüm  + _INDEKS.txt
       richroll\     672 bölüm  + _INDEKS.txt  (zip içinde)
+      sinancanan\ 1.261 bölüm  + _INDEKS.txt  (zip içinde, TÜRKÇE)
       williamson\  1.102 bölüm  + _INDEKS.txt   (KÜTÜPHANE, zip içinde)
 ```
 

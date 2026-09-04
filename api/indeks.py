@@ -64,9 +64,16 @@ def indeks_yukle(veri_dizini: str, koltuk: str) -> Dict[str, List[IndeksKaydi]]:
 
 # ---------------- konuk adi ----------------
 
-_GECERSIZ = re.compile(r"[?!\"]|^\d|episode|podcast|q&a|lessons|part\s*\d|toolkit|ama\s*#",
-                       re.I)
-_EKLER = re.compile(r"\s*\((4K|Audio|Members Only|Replay|Rerun)\)\s*$", re.I)
+# Konuk DEGIL: dizi/seri adlari, bolum turleri, program adlari
+_SERI = re.compile(
+    r"guest series|huberman lab|knowledge project|modern wisdom|jordan harbinger|"
+    r"\bjhs\b|roll on|rollback|best of|rewind|\bfull\b|interview|"
+    r"\bep\b|episode|podcast|\bq&a\b|lessons|toolkit|\bama\b|"
+    r"live event|journal club|mostly wise|\bpart\b|\bvol\b", re.I)
+
+_GECERSIZ = re.compile(r"[?!\"#]|\d")
+_EKLER = re.compile(r"\s*\((4K|Audio|Members Only|Replay|Rerun|Full)\)\s*$", re.I)
+_UNVAN = re.compile(r"^(dr|dr\.|prof|prof\.|professor|sir)\b", re.I)
 
 
 def _aday_gecerli(aday: str) -> bool:
@@ -74,29 +81,52 @@ def _aday_gecerli(aday: str) -> bool:
     if not aday:
         return False
     aday = aday.strip(" -–—|:")
-    if len(aday) < 3 or len(aday) > 60:
+    if not (3 <= len(aday) <= 60):
         return False
-    if _GECERSIZ.search(aday):
+    if _GECERSIZ.search(aday):          # rakam, soru/unlem, tirnak -> baslik parcasi
+        return False
+    if _SERI.search(aday):              # seri/program adi -> konuk degil
+        return False
+    if " x " in f" {aday.lower()} ":    # "Julie Piatt X Rich Roll" gibi ortak bolumler
         return False
     kelime = aday.split()
     if not (1 <= len(kelime) <= 5):
         return False
-    # en az bir kelime buyuk harfle baslamali
-    return any(k[:1].isupper() for k in kelime if k)
+    if aday == aday.upper() and len(aday) > 4:   # "ROLL ON", "PATIENCE IS EVERYTHING"
+        return False
+    # en az iki buyuk harfli kelime, ya da unvanla baslayan tek isim
+    buyuk = sum(1 for x in kelime if x[:1].isupper())
+    if _UNVAN.match(aday):
+        return buyuk >= 2
+    return buyuk >= 2
 
 
-def konuk_cikar(koltuk: str, baslik: Optional[str]) -> Optional[str]:
-    """Basliktan konuk adi cikarir. Cikaramazsa None - uydurmaz."""
+def konuk_cikar(koltuk: str, baslik: str = None):
+    """Basliktan konuk adi cikarir. Cikaramazsa None doner - asla uydurmaz."""
     if not baslik:
         return None
     b = _EKLER.sub("", baslik).strip()
+    # program adi kuyrugunu at:  "... | Rich Roll Podcast"
+    b = re.sub(r"\s*\|\s*(Rich Roll Podcast|Huberman Lab.*|Modern Wisdom.*|"
+               r"The Knowledge Project.*|JHS.*)\s*$", "", b, flags=re.I).strip()
 
-    adaylar: List[str] = []
+    adaylar = []
     if koltuk == "williamson":
-        # "Konu - Konuk"  (1102 bolumun 861'i bu kalipta; kalani Q&A/solo/derleme)
+        # "Konu - Konuk"
         if " - " in b:
             adaylar.append(b.rsplit(" - ", 1)[1])
-    elif koltuk in ("huberman", "harbinger", "parrish", "richroll"):
+    elif koltuk == "richroll":
+        # "... With/with/w/ Konuk"  ya da  "Konu: Konuk"  ya da  "Konuk: Konu"
+        for ayirici in (" w/ ", " With ", " with "):
+            if ayirici in b:
+                adaylar.append(b.rsplit(ayirici, 1)[1])
+        if ":" in b:
+            sol, sag = b.split(":", 1)
+            adaylar.append(sag)
+            adaylar.append(sol)
+        if " - " in b:
+            adaylar.append(b.rsplit(" - ", 1)[1])
+    else:  # huberman, harbinger, parrish
         if "|" in b:
             adaylar.append(b.rsplit("|", 1)[1])
         if " - " in b:
@@ -105,7 +135,8 @@ def konuk_cikar(koltuk: str, baslik: Optional[str]) -> Optional[str]:
             adaylar.append(b.split(":", 1)[0])
 
     for aday in adaylar:
-        temiz = _EKLER.sub("", aday).strip(" -–—|:")
+        temiz = _EKLER.sub("", aday).strip(" -–—|:,")
+        temiz = re.sub(r",\s*(MD|PhD|MS|RD|DO)\.?$", "", temiz, flags=re.I).strip()
         if _aday_gecerli(temiz):
             return temiz
     return None

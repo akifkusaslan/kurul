@@ -134,6 +134,10 @@ def konuk_cikar(koltuk: str, baslik: str = None):
     """Basliktan konuk adi cikarir. Cikaramazsa None doner - asla uydurmaz."""
     if not baslik:
         return None
+    # 06 Sinan Canan: Turkce kanal, basliklar konu adi tasir, konuk adi tasimaz.
+    # Cikarim yapmak uydurma uretir - bu koltukta konuk adi cikarilmaz.
+    if koltuk == "sinancanan":
+        return None
     b = _EKLER.sub("", baslik).strip()
     # program adi kuyrugunu at:  "... | Rich Roll Podcast"
     b = re.sub(r"\s*\|\s*(Rich Roll Podcast|Huberman Lab.*|Modern Wisdom.*|"

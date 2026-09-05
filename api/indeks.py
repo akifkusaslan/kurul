@@ -28,9 +28,49 @@ class IndeksKaydi:
     kelime: Optional[int]
 
 
-def indeks_yukle(veri_dizini: str, koltuk: str) -> Dict[str, List[IndeksKaydi]]:
+def _satir_coz(parcalar):
+    """Bir indeks satirini bicimden bagimsiz coz.
+
+    Iki bicim var:
+      A (01-05):  tarih | baslik | video | kelime        tarih = YYYYAAGG
+      B (06):     no | tarih | kelime | link | baslik    tarih = YYYY-AA-GG
+
+    Ortak yontem: tarihi, URL'yi ve sayilari nerede olurlarsa bul;
+    geriye kalan en uzun metin basliktir.
+    """
+    tarih = url = None
+    kelime = None
+    kalan = []
+    for p in parcalar:
+        d = p.strip()
+        if not d:
+            continue
+        if tarih is None:
+            if len(d) == 8 and d.isdigit():
+                tarih = d; continue
+            m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", d)
+            if m:
+                tarih = m.group(1) + m.group(2) + m.group(3); continue
+        if url is None and d.startswith(("http://", "https://")):
+            url = d; continue
+        sayi = d.replace(",", "").replace(".", "")
+        if kelime is None and sayi.isdigit() and len(sayi) <= 8:
+            # sira numarasi da sayidir; kelime sayisi genelde daha buyuk olur
+            kalan.append(("sayi", int(sayi)))
+            continue
+        kalan.append(("metin", d))
+
+    sayilar = [v for t, v in kalan if t == "sayi"]
+    metinler = [v for t, v in kalan if t == "metin"]
+    if sayilar:
+        kelime = max(sayilar)          # sira no degil, kelime sayisi
+    baslik = " | ".join(metinler).strip()
+    return tarih, baslik, url, kelime
+
+
+def indeks_yukle(veri_dizini: str, koltuk: str):
     yol = os.path.join(veri_dizini, "kulliyat", f"{koltuk}_INDEKS.txt")
-    kayitlar: Dict[str, List[IndeksKaydi]] = {}
+    kayitlar = {}
     if not os.path.exists(yol):
         return kayitlar
     with open(yol, encoding="utf-8", errors="ignore") as f:
@@ -39,25 +79,14 @@ def indeks_yukle(veri_dizini: str, koltuk: str) -> Dict[str, List[IndeksKaydi]]:
     for ln in satirlar:
         s = ln.strip()
         if not basladi:
-            # ayirici cizgiden sonra basla (williamson'da fazladan baslik satiri var)
-            if s and set(s) == {"-"}:
+            if s and set(s) <= {"-"} and len(s) > 10:
                 basladi = True
             continue
-        if not s:
+        if not s or "|" not in s:
             continue
-        parcalar = [p.strip() for p in s.split("|")]
-        if len(parcalar) < 4:
+        tarih, baslik, url, kelime = _satir_coz(s.split("|"))
+        if not tarih or not baslik:
             continue
-        tarih = parcalar[0]
-        if not (len(tarih) == 8 and tarih.isdigit()):
-            continue
-        kelime_ham = parcalar[-1]
-        url = parcalar[-2] or None
-        baslik = " | ".join(parcalar[1:-2]).strip()
-        try:
-            kelime = int(kelime_ham.replace(",", "").replace(".", ""))
-        except ValueError:
-            kelime = None
         kayitlar.setdefault(tarih, []).append(IndeksKaydi(tarih, baslik, url, kelime))
     return kayitlar
 

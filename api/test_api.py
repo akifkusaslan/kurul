@@ -30,12 +30,17 @@ def test_saglik(c):
     assert r.json()["auth_yapilandirildi"] is True
 
 
-# 2 — bes koltugun tamami yuklendi mi
-def test_bes_koltuk_yuklendi(c):
+# 2 — koltuklarin tamami yuklendi mi
+def test_koltuklar_yuklendi(c):
     say = c.get("/saglik").json()["bolum_sayisi"]
-    assert say == {"huberman": 330, "parrish": 116, "harbinger": 194,
-                   "richroll": 672, "williamson": 1102}
-    assert sum(say.values()) == 2414
+    # 06 (sinancanan) kayitli olmali; kulliyati depoda yoksa 0 bolum dondurur
+    assert set(say) == {"huberman", "parrish", "harbinger",
+                        "richroll", "sinancanan", "williamson"}
+    assert say["huberman"] == 330
+    assert say["parrish"] == 116
+    assert say["harbinger"] == 194
+    assert say["richroll"] == 672
+    assert say["williamson"] == 1102
 
 
 # 3 — API anahtarsiz erisim reddedilir
@@ -112,8 +117,10 @@ def test_tarih_indeks_eslesmesi():
         bolumler = k.bolumler[koltuk]
         eslesen = sum(1 for b in bolumler if b.tarih in kayitlar)
         assert eslesen == len(bolumler), f"{koltuk}: {eslesen}/{len(bolumler)}"
+        # Rich Roll'da iki bolumun indekste video linki yok (link alani "-")
+        beklenen_urlsiz = 2 if koltuk == "richroll" else 0
         urlsiz = [b.dosya for b in bolumler if not b.url]
-        assert not urlsiz, urlsiz[:3]
+        assert len(urlsiz) == beklenen_urlsiz, urlsiz[:3]
 
 
 # 10 — indeks SAGDAN ayristirilmali (baslik icinde '|' olabilir)

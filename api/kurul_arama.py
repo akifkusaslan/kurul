@@ -32,6 +32,7 @@ KOLTUKLAR: Dict[str, Dict[str, str]] = {
     "parrish":    {"ad": "Shane Parrish",    "podcast": "The Knowledge Project",  "tip": "koltuk"},
     "harbinger":  {"ad": "Jordan Harbinger", "podcast": "The Jordan Harbinger Show", "tip": "koltuk"},
     "richroll":   {"ad": "Rich Roll",        "podcast": "The Rich Roll Podcast",  "tip": "koltuk"},
+    "sinancanan": {"ad": "Sinan Canan",      "podcast": "Acik Beyin (TURKCE)",    "tip": "koltuk"},
     "williamson": {"ad": "Chris Williamson", "podcast": "Modern Wisdom",          "tip": "kutuphane"},
 }
 
